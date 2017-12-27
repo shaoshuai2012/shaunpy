@@ -8,7 +8,10 @@ print('\n目前系统时间为：', time.strftime("%Y-%m-%d %H:%M:%S", time.loca
 itchat.auto_login(hotReload=True)
 
 # 获取测试群的id
-ceshiqun = itchat.search_chatrooms(name=u'测试群')[0]['UserName']
+banzuqun = itchat.search_chatrooms(name=u'301')[0]['UserName']
+
+# 获取邵帅的id
+shaoshuai = itchat.search_friends(name=u'邵帅')[0]['UserName']
 
 # 获取当日日常工作和值班表
 ykmingdan = ('刘哲、杜璞', '李晓燕、潘津', '柳备、邵帅', '郭雷、周海敏',
@@ -21,27 +24,35 @@ ykgongzuo = '今日日常工作：' + ykrichang[int(time.strftime("%w")) - 1]
 while True:
     # 8:00发送当日日常工作
     if time.strftime("%H%M", time.localtime()) == "0800":
-        itchat.send(ykgongzuo, toUserName=ceshiqun)
+        itchat.send(ykgongzuo, toUserName=banzuqun)
         print(ykgongzuo)
         time.sleep(61)
 
     # 月末提醒填报安全审核
     elif time.strftime("%H%M", time.localtime()) == "0801" \
             and int(time.strftime("%d", time.localtime())) in {27, 28, 29, 30, 31}:
-        itchat.send('温馨提示：临近月末，请填报安全审核。', toUserName=ceshiqun)
+        itchat.send('温馨提示：临近月末，请填报安全审核。', toUserName=banzuqun)
         print('温馨提示：临近月末，请填报安全审核。')
         time.sleep(61)
 
     # 周一提醒1:30召开班会
     elif time.strftime("%H%M", time.localtime()) == "1310" and int(time.strftime("%w")) == 1:
-        itchat.send('温馨提示：今日周一，1:30召开班级会。', toUserName=ceshiqun)
+        itchat.send('温馨提示：今日周一，1:30召开班级会。', toUserName=banzuqun)
         print('温馨提示：今日周一，1:30召开班级会。')
         time.sleep(61)
 
     # 下班提醒工作收尾和值班
     elif time.strftime("%H%M", time.localtime()) == "1600":
-        itchat.send('温馨提示：临近下班，请确认本日工作台账已登记，并记录点检日志。', toUserName=ceshiqun)
+        itchat.send('温馨提示：临近下班，请确认本日工作台账已登记，并记录点检日志。', toUserName=banzuqun)
         print('温馨提示：临近下班，请确认本日工作台账已登记，并记录点检日志。')
-        itchat.send(ykzhiban, toUserName=ceshiqun)
+        itchat.send(ykzhiban, toUserName=banzuqun)
         print(ykzhiban)
         time.sleep(61)
+
+    elif time.strftime("%M", time.localtime()) == "30":
+        itchat.send(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), toUserName=shaoshuai)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        time.sleep(61)
+
+    else:
+        time.sleep(20)
