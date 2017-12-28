@@ -18,8 +18,6 @@ ykmingdan = ('刘哲、杜璞', '李晓燕、潘津', '柳备、邵帅', '郭雷
              '刘立军、冀平', '李捍华、李肖肖', '李海洋、梁海腾')
 ykrichang = ('下班前完成MIS缺陷录入、反违章检查问题填报、上周异常事件台账登记',
              '中午前完成周维护计划填报', '下班前完成周常巡检', '中午前完成缺陷分析', '无', '无', '无')
-ykzhiban = '今日值班人员（默认）：' + ykmingdan[(int(time.time() / 86400) % 8) - 1]
-ykgongzuo = '今日日常工作：' + ykrichang[int(time.strftime("%w")) - 1]
 
 while True:
     # 8:00发送当日日常工作
@@ -55,4 +53,6 @@ while True:
         time.sleep(61)
 
     else:
+        ykzhiban = '今日值班人员（默认）：' + ykmingdan[(int(time.time() / 86400) % 8) - 1]
+        ykgongzuo = '今日日常工作：' + ykrichang[int(time.strftime("%w")) - 1]
         time.sleep(20)
