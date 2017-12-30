@@ -16,7 +16,7 @@ shaoshuai = itchat.search_friends(name=u'邵帅')[0]['UserName']
 # 获取当日日常工作和值班表
 ykmingdan = ('刘哲、杜璞', '李晓燕、潘津', '柳备、邵帅', '郭雷、周海敏',
              '刘立军、冀平', '李捍华、李肖肖', '李海洋、梁海腾')
-ykrichang = ('下班前完成MIS缺陷录入、反违章检查问题填报、上周异常事件台账登记',
+ykricflag = ('下班前完成MIS缺陷录入、反违章检查问题填报、上周异常事件台账登记',
              '中午前完成周维护计划填报', '下班前完成周常巡检', '中午前完成缺陷分析', '无', '无', '无')
 
 while True:
@@ -54,5 +54,5 @@ while True:
 
     else:
         ykzhiban = '今日值班人员（默认）：' + ykmingdan[(int(time.time() / 86400) % 8) - 1]
-        ykgongzuo = '今日日常工作：' + ykrichang[int(time.strftime("%w")) - 1]
+        ykgongzuo = '今日日常工作：' + ykricflag[int(time.strftime("%w")) - 1]
         time.sleep(20)
