@@ -22,7 +22,7 @@ def text_reply(msg):
             flag = data['试题'][0][2]
             data['试题'][0][2] = 1
             save_data("试题.xls", data)
-            return '答对了~答案是：' + data['试题'][flag - 1][1] + '\n已完成所有题目，恭喜~！\n题目已重置'
+            return '答对了~答案是：' + data['试题'][flag][1] + '\n已完成所有题目，恭喜~！\n题目已重置。\n请听下一题：' + data['试题'][data['试题'][0][2]][0]
     elif msg['Text'] in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D') and msg['Text'] != str(
             data['试题'][data['试题'][0][2]][1]) and msg['Text'] != str.lower(data['试题'][data['试题'][0][2]][1]):
         save_data("试题.xls", data)
