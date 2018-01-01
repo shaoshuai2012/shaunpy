@@ -2,7 +2,8 @@ import itchat
 from pyexcel_xls import get_data
 from pyexcel_xls import save_data
 
-print('试题条数：', len(get_data(r"C:/shaunpy/试题.xls")['试题']) - 1)
+print('库存试题数：', len(get_data(r"C:/shaunpy/试题.xls")['试题']) - 1)
+print('当前题目编号：', get_data(r"C:/shaunpy/试题.xls")['试题'][0][2])
 
 
 @itchat.msg_register(itchat.content.TEXT, isGroupChat=True)
