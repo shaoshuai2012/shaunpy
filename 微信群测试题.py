@@ -2,8 +2,6 @@ import itchat
 from pyexcel_xls import get_data
 from pyexcel_xls import save_data
 
-# data = get_data(r"/Users/ShaoShuai/Desktop/shaunpy/微信台账登记.xls")
-# data = get_data(r"C:/shaunpy/试题.xls")
 print('试题条数：', len(get_data(r"C:/shaunpy/试题.xls")['试题']) - 1)
 
 
