@@ -1,5 +1,3 @@
-test = input()
-if test in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'):
-    print('yes')
-else:
-    print('no')
+score = {'ss': '100', 'cc': '99'}
+for key, value in score.items():
+    print('key=', key, '，value=', value)

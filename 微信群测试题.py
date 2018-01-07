@@ -1,45 +1,60 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import platform
 import itchat
+import sys
 from pyexcel_xls import get_data
 from pyexcel_xls import save_data
 
-# print('库存试题数：', len(get_data(r"C:/shaunpy/试题.xls")['试题']) - 1)
-# print('当前题目编号：', get_data(r"C:/shaunpy/试题.xls")['试题'][0][2])
-print('库存试题数：', len(get_data(r"/Users/ShaoShuai/Desktop/shaunpy/试题.xls")['试题']) - 1)
-print('当前题目编号：', get_data(r"/Users/ShaoShuai/Desktop/shaunpy/试题.xls")['试题'][0][2])
+# 根据系统环境配置题库文件路径
+if platform.system() == 'Darwin':  # Mac下地址
+    location = r"/Users/ShaoShuai/Desktop/shaunpy/试题.xls"
+elif platform.system() == 'Windows':  # Windows下地址
+    location = r"C:/shaunpy/试题.xls"
+else:
+    print('系统环境未知，请重新设置文件路径！')
+    sys.exit(0)
+
+# 输出当前试题库情况
+print('库存试题数：', len(get_data(location)['试题']) - 1, '\n当前题目编号：', get_data(location)['试题'][0][2])
 score = {}
+
 
 @itchat.msg_register(itchat.content.TEXT, isGroupChat=True)
 def text_reply(msg):
-    # data = get_data(r"C:/shaunpy/试题.xls")
-    data = get_data(r"/Users/ShaoShuai/Desktop/shaunpy/试题.xls")
-    if msg['Text'] == '开始答题':
+    data = get_data(location)  # 读取试题文件
+    if msg['Text'] == '开始答题':  # 开始答题时，返回当前序号对应题目
         return data['试题'][data['试题'][0][2]][0]
     elif msg['Text'] == str(data['试题'][data['试题'][0][2]][1]) or msg['Text'] == str.lower(
-            data['试题'][data['试题'][0][2]][1]):
+            data['试题'][data['试题'][0][2]][1]):  # 如果答对了
         name = msg['ActualNickName']
-        if name in score.keys():
+        if name in score.keys():  # 如果名单列表里已有，为对应名字加分
             score[name] = score[name] + 1
-        else:
+        else:  # 如果名单列表里没有，增加名字，并给分
             score[name] = 1
-        if data['试题'][0][2] < len(data['试题']) - 1:
+        if data['试题'][0][2] < len(data['试题']) - 1:  # 如果答对且还有题目，发送答案和下一题题目
             data['试题'][0][2] = data['试题'][0][2] + 1
             save_data("试题.xls", data)
-            return '答对了~答案是：' + data['试题'][data['试题'][0][2] - 1][1] + '\n请听下一题：' + data['试题'][data['试题'][0][2]][0]
-        else:
+            return '答对了~答案是：' + data['试题'][data['试题'][0][2] - 1][1] + \
+                   '\n\n请听下一题：\n' + data['试题'][data['试题'][0][2]][0]
+        else:  # 如果答对且没有题目了，发送答案并从第一题开始
             flag = data['试题'][0][2]
             data['试题'][0][2] = 1
             save_data("试题.xls", data)
-            return '答对了~答案是：' + data['试题'][flag][1] + '\n已完成所有题目，恭喜~！\n题目已重置。\n请听下一题：' + data['试题'][data['试题'][0][2]][0]
+            return '答对了~答案是：' + data['试题'][flag][1] + \
+                   '\n\n已完成所有题目，恭喜~！\n题目已重置。\n\n请听下一题：\n' + data['试题'][data['试题'][0][2]][0]
     elif msg['Text'] in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D') and msg['Text'] != str(
-            data['试题'][data['试题'][0][2]][1]) and msg['Text'] != str.lower(data['试题'][data['试题'][0][2]][1]):
+            data['试题'][data['试题'][0][2]][1]) and \
+            msg['Text'] != str.lower(data['试题'][data['试题'][0][2]][1]):  # 如果答错了，提示错误
         save_data("试题.xls", data)
         return '答案不是' + msg['Text'] + '哦，再想想~'
-    elif msg['Text'] == '查看成绩':
+    elif msg['Text'] == '查看成绩':  # 查看成绩时，输出所有姓名对应成绩
         chengji = ''
         for key in score:
             chengji = chengji + '姓名：' + key + '  成绩：' + str(score[key]) + '分\n'
         return chengji
 
 
-itchat.auto_login(hotReload=True)
+itchat.auto_login(hotReload=True)  # 登录itchat并运行
 itchat.run()
