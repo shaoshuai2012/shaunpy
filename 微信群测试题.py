@@ -7,10 +7,9 @@ import sys
 from pyexcel_xls import get_data
 from pyexcel_xls import save_data
 
-# 根据系统环境配置题库文件路径
-if platform.system() == 'Darwin':  # Mac下地址
+if platform.system() == 'Darwin':  # Mac环境下题库文件路径
     location = r"/Users/ShaoShuai/Desktop/shaunpy/试题.xls"
-elif platform.system() == 'Windows':  # Windows下地址
+elif platform.system() == 'Windows':  # Windows环境下题库文件路径
     location = r"C:/shaunpy/试题.xls"
 else:
     print('系统环境未知，请重新设置文件路径！')
@@ -24,11 +23,17 @@ score = {}
 @itchat.msg_register(itchat.content.TEXT, isGroupChat=True)
 def text_reply(msg):
     data = get_data(location)  # 读取试题文件
+    ans = data['试题'][data['试题'][0][2]][1]
+    chengji = ''
+    name = msg['ActualNickName']
     if msg['Text'] == '开始答题':  # 开始答题时，返回当前序号对应题目
-        return data['试题'][data['试题'][0][2]][0]
-    elif msg['Text'] == str(data['试题'][data['试题'][0][2]][1]) or msg['Text'] == str.lower(
-            data['试题'][data['试题'][0][2]][1]):  # 如果答对了
-        name = msg['ActualNickName']
+        return '请听题：\n' + data['试题'][data['试题'][0][2]][0]
+    elif msg['Text'] == '查看成绩':  # 查看成绩时，输出所有姓名对应成绩
+        paihang = sorted(score.items(), key=lambda d: d[1], reverse=True)  # 对成绩排序
+        for i in range(len(paihang)):
+            chengji = chengji + '姓名：' + paihang[i][0] + '  成绩：' + str(paihang[i][1]) + '分\n'
+        return chengji
+    elif msg['Text'] in [str(ans), str.lower(ans)]:  # 如果答对了
         if name in score.keys():  # 如果名单列表里已有，为对应名字加分
             score[name] = score[name] + 1
         else:  # 如果名单列表里没有，增加名字，并给分
@@ -43,17 +48,17 @@ def text_reply(msg):
             data['试题'][0][2] = 1
             save_data("试题.xls", data)
             return '答对了~答案是：' + data['试题'][flag][1] + \
-                   '\n\n已完成所有题目，恭喜~！\n题目已重置。\n\n请听下一题：\n' + data['试题'][data['试题'][0][2]][0]
-    elif msg['Text'] in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D') and msg['Text'] != str(
-            data['试题'][data['试题'][0][2]][1]) and \
-            msg['Text'] != str.lower(data['试题'][data['试题'][0][2]][1]):  # 如果答错了，提示错误
+                   '\n\n已完成所有题目，恭喜~！\n题目已重置。\n\n请听第一题：\n' + data['试题'][1][0]
+    elif msg['Text'] in ['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'] and \
+            msg['Text'] not in [str(ans), str.lower(ans)]:  # 如果答错了，提示错误
+        if name in score.keys():  # 如果名单列表里已有，为对应名字扣分
+            score[name] = score[name] - 1
+        else:  # 如果名单列表里没有，增加名字，并扣分
+            score[name] = -1
         save_data("试题.xls", data)
         return '答案不是' + msg['Text'] + '哦，再想想~'
-    elif msg['Text'] == '查看成绩':  # 查看成绩时，输出所有姓名对应成绩
-        chengji = ''
-        for key in score:
-            chengji = chengji + '姓名：' + key + '  成绩：' + str(score[key]) + '分\n'
-        return chengji
+    else:
+        pass
 
 
 itchat.auto_login(hotReload=True)  # 登录itchat并运行
