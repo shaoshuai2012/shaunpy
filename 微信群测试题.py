@@ -31,7 +31,8 @@ def text_reply(msg):
         paihang = sorted(score.items(), key=lambda d: d[1], reverse=True)  # 对成绩排序
         chengji = ''
         for i in range(len(paihang)):
-            chengji = chengji + '第' + str(i+1) + '名：' + paihang[i][0] + '  成绩：' + str(paihang[i][1]) + '分\n'
+            chengji = chengji + '第' + str(i+1) + '名：' + paihang[i][0] + \
+                      '  成绩：' + str(paihang[i][1]) + '分\n'
         return chengji
     elif msg['Text'] in [str(ans), str.lower(ans)]:  # 如果答对了
         if name in score.keys():  # 如果名单列表里已有，为对应名字加分
